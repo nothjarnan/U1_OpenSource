@@ -1,0 +1,50 @@
+args = {...}
+if not fs.exists("pocke") then
+  print("Installing U1 Pre-Alpha")
+else
+  print("Updating U1 Pre-Alpha")
+end
+if not http then
+  print("HTTP not enabled! Make sure you enable it in the server configuration!")
+end
+function download(url, file)
+  --if not args[1] == "silent" and args[1] == nil then
+    print("Downloading "..file)
+  --end
+  fdl = http.get(url)
+  if not fdl then
+    --if not args[1] == "silent" and args[1] == nil then
+      print("Failed to connect! Are you connected to the internet?")
+    --end
+  end
+  f = fs.open(file,"w")
+  --if not args[1] == "silent" and args[1] == nil then
+  print("Opening file "..file)
+  f.write(fdl.readAll())
+  f.close()
+  if not args[1] == "silent" and args[1] == nil then
+    print("Written to file "..file)
+  end
+end
+download("https://www.dropbox.com/s/k15800l0dkhirmo/startup?dl=1","startup")
+download("https://www.dropbox.com/s/6exvxj3l60vs8r5/os.lua?dl=1","pocke/os.lua")
+download("https://www.dropbox.com/s/hbmt6bf1tjl8z4z/settings?dl=1","pocke/api/settings")
+download("https://www.dropbox.com/s/rxxg8cxhoe83h2o/edge?dl=1","pocke/api/edge")
+download("https://www.dropbox.com/s/48ca6yjrsecsnd7/crash?dl=1","pocke/user/crash")
+download("https://www.dropbox.com/s/i18p42ph8blylfm/settings.cfg?dl=1","pocke/settings.cfg")
+download("https://www.dropbox.com/s/ed57owqqjp53l57/installer?dl=1","pocke/user/updater")
+sleep(1)
+shell.run("clear")
+print("Run U1 on startup? (Y/N)")
+ans = io.read()
+if string.find("y",ans) then
+  print("OK, Rebooting.")
+  sleep(3)
+  os.reboot()
+else
+  fs.delete("startup")
+  print("OK, Rebooting.")
+  print("You can run U1 by typing 'pocke/os.lua'")
+  sleep(3)
+  os.reboot()
+end

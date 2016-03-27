@@ -1,0 +1,87 @@
+local function getLines(filename)
+	if not fs.exists(filename) then return end
+
+	local t = {}
+	for line in io.lines(filename) do
+		table.insert(t, line)
+	end
+
+	return t
+end
+local function writeSettings(filename, settingsTable)
+	if not fs.exists(filename) then return false end
+
+	file = fs.open(filename, "w")
+	for _,item in ipairs(settingsTable) do
+		if item == settingsTable[table.getn(settingsTable)] then --om sista entry
+			file.write(item)
+		else
+			file.writeLine(item)
+		end
+	end
+	file.close()
+
+	return true
+end
+
+function getVariable(filename, variableName)
+	if not fs.exists(filename) then return false end
+
+	local lns = getLines(filename)
+	for _,item in ipairs(lns) do
+		local var, val = string.match(item, "(.+)%s*=%s*(.+)")
+		if var == variableName then
+			return val
+		end
+	end
+
+	return false
+end
+
+function setVariable(filename, variableName, value)
+	local file
+	if not fs.exists(filename) then
+		file = fs.open(filename, "w")
+		file.write(variableName.."="..value)
+		file.close()
+		return true
+	end
+
+	local alreadyExists = false
+	local lns = getLines(filename)
+	local x = 1
+	for _,item in ipairs(lns) do
+		local var, val = string.match(item, "(.+)%s*=%s*(.+)")
+		if var == variableName then
+			--print("already exists, replacing")
+			lns[x] = var.."="..value
+			alreadyExists = true
+		end
+		x = x + 1
+	end
+
+	if alreadyExists == false then
+		table.insert(lns, variableName.."="..value)
+	end
+
+	writeSettings(filename,lns)
+	return true
+end
+
+function removeVariable(filename, variableName)
+	if not fs.exists(filename) then return false end
+
+	local lns = getLines(filename)
+	local x = 1
+	for _,item in ipairs(lns) do
+		local var, val = string.match(item, "(%w+)%s*=%s*(%w+)")
+		if var == variableName then
+			table.remove(lns, x)
+		end
+		x = x + 1
+	end
+
+	writeSettings(filename,lns)
+	return true
+end
+edge.log("pocke/api/settings: Ready")

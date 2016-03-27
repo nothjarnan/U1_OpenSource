@@ -1,0 +1,18 @@
+function boot()
+  -- load APIS
+  shell.run("clear")
+  --edge.log("startup: Loading APIs")
+  os.loadAPI("pocke/api/edge")
+  os.loadAPI("pocke/api/settings")
+  edge.log("startup: APIs loaded successfully")
+  --edge.xprint("Loading", 13 - string.len("Loading") / 2 + 1, 10,colors.red)
+  edge.log("startup: Attempting boot")
+  if not fs.exists("pocke/os.lua") then
+    if fs.exists("backup/pocke/os.lua") then
+      fs.move("backup","/")
+    end
+  else
+    shell.run("pocke/os.lua")
+  end
+end
+boot()

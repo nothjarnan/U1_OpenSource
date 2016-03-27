@@ -1,0 +1,10 @@
+os.unloadAPI("pocke/api/edge")
+os.unloadAPI("pocke/api/settings")
+shell.run("clear")
+print("U1 has encountered an error and had to quit to prevent damage.")
+print("Saving log file in 'pocke/user/log_crash.txt'")
+fs.move("pocke/log.txt","pocke/user/log_crash.txt")
+term.setCursorPos(1,5)
+while(true) do
+  sleep(1)
+end
